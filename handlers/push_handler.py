@@ -41,7 +41,7 @@ def handle_push_choice(update: Update,
 
     subprocess.run(['hexo', 'clean'])
     subprocess.run(['hexo', 'generate'])
-    # subprocess.run(['hexo', 'deploy'])
+    subprocess.run(['hexo', 'deploy'])
 
     query = update.callback_query
     query.message.reply_text('Site compiled and deployed to GitHub.')
