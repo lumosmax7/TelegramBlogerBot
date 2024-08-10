@@ -1,9 +1,5 @@
-
-import os
-from datetime import datetime
 from telegram import Update
 from telegram.ext import CallbackContext
-from config import REPO_PATH
 from handlers import user_state_handler
 
 def start(update: Update, context: CallbackContext) -> None:

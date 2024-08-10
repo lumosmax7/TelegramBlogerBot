@@ -1,11 +1,20 @@
-# Auto gh-page generator by tg-bot
+# Auto Github Page generator by tg-bot
 ## Usage
 1. Clone this project into your hexo blog file and assure your blog can be correctly deployed on GitHub.
-2. File in the `config.py`
-```angular2html
-TOKEN = '' //tg bot token
-REPO_PATH = '' // your hexo blog path
-GIT_REPO_URL = '' //your gh-page url
-```
-3. Run `main.py`
-4. Enjoy your tg-bot with command `/start`
+2. Run `bash init.bash` to init the bot service.
+3. Enjoy your tg-bot with command `/start`
+
+
+## Requirement
+1. python3
+2. systemctl
+3. pip3
+4. Node.js
+5. npm
+6. tg-bot python api
+7. hexo
+
+## TODO
+- [ ] Hexo init 
+- [ ] Hexo setting(Focusing on Github deploy)
+- [ ] Package the code into a docker image.
