@@ -77,7 +77,7 @@ load_requirement(){
 # 检查并安装 Node.js 和 npm
 install_nodejs() {
     if command -v node &> /dev/null && command -v npm &> /dev/null; then
-        echo "Node.js 和 npm 已经安装." #TODO:利用该方法安装nodejs版本可能过低
+        echo "Node.js 和 npm 已经安装." #TODO:利用该方法安装nodejs版本可能过低 -->后续研究打包成docker镜像
     else
         echo "安装 Node.js 和 npm..."
         if [ -f /etc/debian_version ]; then

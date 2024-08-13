@@ -6,6 +6,7 @@ def start(update: Update, context: CallbackContext) -> None:
     update.message.reply_text('Hello! This bot can help you manage your Hexo blog. Command lists are below: \n'
                               ' /new command you can create a new draft.\n'
                               ' /edit command you can edit a previous draft.\n'
+                              ' /post_edit command you can edit a post.\n'
                               ' /delete command you can delete a previous draft.\n'
                               ' /page_delete command you can delete a previous page.\n'
                               ' /push command you can push your changes to your blog.\n'

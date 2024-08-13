@@ -47,9 +47,37 @@ def handle_new_message(update: Update, context: CallbackContext) -> None:
         user_state_handler.set_user_state(None)
         user_state_handler.set_user_draft(None)
 
+def handle_post_edit_message(update: Update, context: CallbackContext) -> None:
+    if user_state_handler.get_user_state() == 'post_edit_title':
+        new_title = update.message.text
+        old_path = os.path.join(BLOG_PATH, 'source/_posts', user_state_handler.get_user_post() + '.md')
+        new_path = os.path.join(BLOG_PATH, 'source/_posts', f'{new_title}.md')
+        os.rename(old_path, new_path)
+        with open(new_path, 'r+') as f:
+            content = f.readlines()
+            content[1] = f'title: {new_title}\n'
+            f.seek(0)
+            f.writelines(content)
+            f.truncate()
+        update.message.reply_text(f'Title updated to: {new_title}.md')
+        user_state_handler.set_user_state(None)
+        user_state_handler.set_user_post(None)
+    elif user_state_handler.get_user_state() == 'post_edit_content':
+        new_content = update.message.text
+        post_path = os.path.join(BLOG_PATH, 'source/_posts', user_state_handler.get_user_post() + '.md')
+        with open(post_path, 'w') as f:
+            f.write('---\n')
+            f.write(f'title: {user_state_handler.get_user_post()}\n')
+            f.write('---\n\n')
+            f.write(new_content)
+        update.message.reply_text(f'Content updated for: {user_state_handler.get_user_post()}.md')
+        user_state_handler.set_user_state(None)
+        user_state_handler.set_user_post(None)
 
 def handle_message(update: Update, context: CallbackContext) -> None:
     if user_state_handler.get_user_state() == 'new_title' or user_state_handler.get_user_state() == 'new_content':
         handle_new_message(update, context)
     elif user_state_handler.get_user_state() in ['edit_title', 'edit_content']:
         handle_edit_message(update, context)
+    elif user_state_handler.get_user_state() in ['post_edit_title', 'post_edit_content']:
+        handle_post_edit_message(update, context)

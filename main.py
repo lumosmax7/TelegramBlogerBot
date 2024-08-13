@@ -15,7 +15,8 @@ def main():
 
     dispatcher.add_handler(CommandHandler("start", new_handler.start))
     dispatcher.add_handler(CommandHandler("new", new_handler.new))
-    dispatcher.add_handler(CommandHandler("edit", edit_handler.edit)) #TODO: add edit _post func.
+    dispatcher.add_handler(CommandHandler("edit", edit_handler.edit))
+    dispatcher.add_handler(CommandHandler("post_edit", edit_handler.post_edit))
     dispatcher.add_handler(CommandHandler("delete", delete_handler.delete))
     dispatcher.add_handler(CommandHandler("page_delete", page_delete_handler.page_delete))
     dispatcher.add_handler(CommandHandler("push", push_handler.push))

@@ -2,7 +2,7 @@ import os
 from telegram import Update
 from telegram.ext import CallbackContext
 from config import BLOG_PATH
-from handlers.edit_handler import handle_edit_choice
+from handlers.edit_handler import handle_edit_choice, handle_post_edit_choice
 from handlers import user_state_handler
 from handlers.page_delete_handler import handle_page_delete_choice
 from handlers.push_handler import handle_push_choice
@@ -40,7 +40,27 @@ def button(update: Update, context: CallbackContext) -> None:
     elif data.startswith('page_delete'):
         page_name = data[len('page_delete_'):]
         handle_page_delete_choice(update, context, page_name)
-
+    elif data.startswith('post_edit'):
+        post = data[len('post_edit_'):]
+        if data.startswith('post_edit_title_'):
+            post = data[len('post_edit_title_'):]
+            post = post[:-3]
+            query.message.reply_text(f'Please enter the new title for the draft "{post}":')
+            user_state_handler.set_user_state('post_edit_title')
+            user_state_handler.set_user_post(post)
+        elif data.startswith('post_edit_content_'):
+            post = data[len('post_edit_content_'):]
+            post_path = os.path.join(BLOG_PATH, 'source/_posts', post)
+            post = post[:-3]
+            if os.path.exists(post_path):
+                with open(post_path, 'r') as f:
+                    content = f.readlines()[3:]
+                content=''.join(content)
+                query.message.reply_text(f'Current content:\n{content}\n\nPlease enter the new content for the draft "{post}":')
+                user_state_handler.set_user_state('edit_content')
+                user_state_handler.set_user_draft(post)
+        else:
+            handle_post_edit_choice(update, context, post)
     elif data.startswith('confirm_push'):
         handle_push_choice(update, context)
 
