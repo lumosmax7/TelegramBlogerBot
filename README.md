@@ -16,6 +16,7 @@
 8. git
 
 ## TODO
+- [x] Add a command to change a previous post
 - [ ] Hexo init 
 - [ ] Hexo setting(Focusing on Github deploy)
 - [ ] Package the code into a docker image.
