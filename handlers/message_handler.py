@@ -25,7 +25,7 @@ def handle_edit_message(update: Update, context: CallbackContext) -> None:
         with open(draft_path, 'w') as f:
             f.write('---\n')
             f.write(f'title: {user_state_handler.get_user_draft()}\n')
-            f.write('---\n')
+            f.write('---\n\n')
             f.write(new_content)
         update.message.reply_text(f'Content updated for: {user_state_handler.get_user_draft()}.md')
         user_state_handler.set_user_state(None)
@@ -41,8 +41,8 @@ def handle_new_message(update: Update, context: CallbackContext) -> None:
         with open(draft_path, 'w') as f:
             f.write('---\n')
             f.write(f'title: {user_state_handler.get_user_draft()}\n')
-            f.write('---\n')
-            f.write(f'{content}')
+            f.write('---\n\n')
+        f.write(f'{content}')
         update.message.reply_text(f'New draft created: {user_state_handler.get_user_draft()}')
         user_state_handler.set_user_state(None)
         user_state_handler.set_user_draft(None)

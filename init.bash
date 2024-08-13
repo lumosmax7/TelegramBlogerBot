@@ -77,7 +77,7 @@ load_requirement(){
 # 检查并安装 Node.js 和 npm
 install_nodejs() {
     if command -v node &> /dev/null && command -v npm &> /dev/null; then
-        echo "Node.js 和 npm 已经安装."
+        echo "Node.js 和 npm 已经安装." #TODO:利用该方法安装nodejs版本可能过低
     else
         echo "安装 Node.js 和 npm..."
         if [ -f /etc/debian_version ]; then
@@ -146,12 +146,35 @@ EOL
 
     echo "服务 ${SERVICE_NAME} 已经成功创建并启动."
 }
+
+install_git() {
+    if command -v git &> /dev/null; then
+        echo "Git 已经安装."
+    else
+        echo "安装 Git..."
+        if [ -f /etc/debian_version ]; then
+            sudo apt update
+            sudo apt install -y git
+        elif [ -f /etc/redhat-release ]; then
+            sudo yum install -y git
+        elif [ -f /etc/fedora-release ]; then
+            sudo dnf install -y git
+        elif [ -f /etc/arch-release ]; then
+            sudo pacman -Syu git --noconfirm
+        else
+            echo "无法识别的 Linux 发行版，请手动安装 Git."
+            exit 1
+        fi
+    fi
+}
+
 init_depend(){
       install_python3
       install_systemctl
       load_requirement
       install_nodejs
       install_hexo
+      install_git
 }
 
 

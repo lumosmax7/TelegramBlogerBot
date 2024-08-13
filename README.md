@@ -13,6 +13,7 @@
 5. npm
 6. tg-bot python api
 7. hexo
+8. git
 
 ## TODO
 - [ ] Hexo init 
