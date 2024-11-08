@@ -24,7 +24,7 @@ def button(update: Update, context: CallbackContext) -> None:
             draft = draft[:-3]
             if os.path.exists(draft_path):
                 with open(draft_path, 'r') as f:
-                    content = f.readlines()[3:]
+                    content = f.readlines()[4:]
                 content=''.join(content)
                 query.message.reply_text(f'Current content:\n{content}\n\nPlease enter the new content for the draft "{draft}":')
                 user_state_handler.set_user_state('edit_content')
@@ -54,11 +54,11 @@ def button(update: Update, context: CallbackContext) -> None:
             post = post[:-3]
             if os.path.exists(post_path):
                 with open(post_path, 'r') as f:
-                    content = f.readlines()[3:]
+                    content = f.readlines()[4:]
                 content=''.join(content)
                 query.message.reply_text(f'Current content:\n{content}\n\nPlease enter the new content for the draft "{post}":')
-                user_state_handler.set_user_state('edit_content')
-                user_state_handler.set_user_draft(post)
+                user_state_handler.set_user_state('post_edit_content')
+                user_state_handler.set_user_post(post)
         else:
             handle_post_edit_choice(update, context, post)
     elif data.startswith('confirm_push'):

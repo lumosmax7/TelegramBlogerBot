@@ -17,6 +17,6 @@
 
 ## TODO
 - [x] Add a command to change a previous post
-- [ ] Hexo init 
-- [ ] Hexo setting(Focusing on Github deploy)
-- [ ] Package the code into a docker image.
+- [x] Package the code into a docker image.
+- [x] Hexo init --> turn to mount volume
+- [x] Hexo setting(Focusing on Github deploy)
