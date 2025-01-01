@@ -7,16 +7,18 @@
 
 ## Requirement
 1. python3
-2. systemctl
-3. pip3
-4. Node.js
-5. npm
-6. tg-bot python api
-7. hexo
-8. git
+2. pip3
+3. Node.js
+4. npm
+5. tg-bot python api
+6. hexo
+7. git
 
 ## TODO
 - [x] Add a command to change a previous post
-- [ ] Hexo init 
-- [ ] Hexo setting(Focusing on Github deploy)
-- [ ] Package the code into a docker image.
+- [x] Package the code into a docker image.
+- [x] Hexo init --> turn to mount volume
+- [x] Hexo setting(Focusing on Github deploy)
+- [x] Using docker to deploy the bot service.
+- [ ] code optimization 
+- [ ] pics optimization

@@ -1,14 +1,31 @@
+from datetime import datetime
+
 from telegram import Update
 from telegram.ext import CallbackContext
 from handlers import user_state_handler
 import os
-from config import BLOG_PATH
+import re
+def remove_backslashes_in_code_blocks(text):
+    # 匹配所有以 ```cpp 并以 ```的代码块
+    code_blocks = re.findall(r'(```cpp.*?```)', text, re.DOTALL)
+    # 去除代码块中的反斜杠
+    for block in code_blocks:
+        cleaned_block = re.sub(r'\\', '', block)
+        text = text.replace(block, cleaned_block)
+    re.sub(r'\\(?=[.,/*%])', '', text)
+    return text
+
+
+def remove_backslashes_before_backticks(text):
+    # 匹配并去除出现在 ` 前的反斜杠
+    text =re.sub(r'\\`', '`', text)
+    return re.sub(r'\\', '', text)
 
 def handle_edit_message(update: Update, context: CallbackContext) -> None:
     if user_state_handler.get_user_state() == 'edit_title':
         new_title = update.message.text
-        old_path = os.path.join(BLOG_PATH, 'source/_drafts', user_state_handler.get_user_draft() + '.md')
-        new_path = os.path.join(BLOG_PATH, 'source/_drafts', f'{new_title}.md')
+        old_path = os.path.join("/app/bloger", 'source/_drafts', user_state_handler.get_user_draft() + '.md')
+        new_path = os.path.join("/app/bloger", 'source/_drafts', f'{new_title}.md')
         os.rename(old_path, new_path)
         with open(new_path, 'r+') as f:
             content = f.readlines()
@@ -20,11 +37,17 @@ def handle_edit_message(update: Update, context: CallbackContext) -> None:
         user_state_handler.set_user_state(None)
         user_state_handler.set_user_draft(None)
     elif user_state_handler.get_user_state() == 'edit_content':
-        new_content = update.message.text
-        draft_path = os.path.join(BLOG_PATH, 'source/_drafts', user_state_handler.get_user_draft() + '.md')
+        if(re.search(r'```.*?```', update.message.text_markdown, re.DOTALL)):
+            new_content= remove_backslashes_in_code_blocks(update.message.text_markdown)
+        elif(re.search(r'`.*?`', update.message.text_markdown, re.DOTALL)):
+            new_content = remove_backslashes_before_backticks(update.message.text_markdown)
+        else:
+            new_content = update.message.text_markdown
+        draft_path = os.path.join("/app/bloger", 'source/_drafts', user_state_handler.get_user_draft() + '.md')
         with open(draft_path, 'w') as f:
             f.write('---\n')
             f.write(f'title: {user_state_handler.get_user_draft()}\n')
+            f.write(f'date: {datetime.now().strftime("%Y-%m-%d %H:%M:%S")}\n')
             f.write('---\n\n')
             f.write(new_content)
         update.message.reply_text(f'Content updated for: {user_state_handler.get_user_draft()}.md')
@@ -36,13 +59,19 @@ def handle_new_message(update: Update, context: CallbackContext) -> None:
         update.message.reply_text(f'Title received: {user_state_handler.get_user_draft()}\nNow please enter the content of the draft:')
         user_state_handler.set_user_state('new_content')
     elif user_state_handler.get_user_state() == 'new_content':
-        content = update.message.text
-        draft_path = os.path.join(BLOG_PATH, 'source/_drafts', f'{user_state_handler.get_user_draft()}.md')
+        if(re.search(r'```.*?```', update.message.text_markdown, re.DOTALL)):
+            new_content= remove_backslashes_in_code_blocks(update.message.text_markdown)
+        elif(re.search(r'`.*?`', update.message.text_markdown, re.DOTALL)):
+            new_content = remove_backslashes_before_backticks(update.message.text_markdown)
+        else:
+            new_content = update.message.text_markdown
+        draft_path = os.path.join("/app/bloger", 'source/_drafts', f'{user_state_handler.get_user_draft()}.md')
         with open(draft_path, 'w') as f:
             f.write('---\n')
             f.write(f'title: {user_state_handler.get_user_draft()}\n')
+            f.write(f'date: {datetime.now().strftime("%Y-%m-%d %H:%M:%S")}\n')
             f.write('---\n\n')
-        f.write(f'{content}')
+            f.write(f'{new_content}')
         update.message.reply_text(f'New draft created: {user_state_handler.get_user_draft()}')
         user_state_handler.set_user_state(None)
         user_state_handler.set_user_draft(None)
@@ -50,8 +79,8 @@ def handle_new_message(update: Update, context: CallbackContext) -> None:
 def handle_post_edit_message(update: Update, context: CallbackContext) -> None:
     if user_state_handler.get_user_state() == 'post_edit_title':
         new_title = update.message.text
-        old_path = os.path.join(BLOG_PATH, 'source/_posts', user_state_handler.get_user_post() + '.md')
-        new_path = os.path.join(BLOG_PATH, 'source/_posts', f'{new_title}.md')
+        old_path = os.path.join("/app/bloger", 'source/_posts', user_state_handler.get_user_post() + '.md')
+        new_path = os.path.join("/app/bloger", 'source/_posts', f'{new_title}.md')
         os.rename(old_path, new_path)
         with open(new_path, 'r+') as f:
             content = f.readlines()
@@ -63,11 +92,17 @@ def handle_post_edit_message(update: Update, context: CallbackContext) -> None:
         user_state_handler.set_user_state(None)
         user_state_handler.set_user_post(None)
     elif user_state_handler.get_user_state() == 'post_edit_content':
-        new_content = update.message.text
-        post_path = os.path.join(BLOG_PATH, 'source/_posts', user_state_handler.get_user_post() + '.md')
+        if(re.search(r'```.*?```', update.message.text_markdown, re.DOTALL)):
+            new_content= remove_backslashes_in_code_blocks(update.message.text_markdown)
+        elif(re.search(r'`.*?`', update.message.text_markdown, re.DOTALL)):
+            new_content = remove_backslashes_before_backticks(update.message.text_markdown)
+        else:
+            new_content = update.message.text_markdown
+        post_path = os.path.join("/app/bloger", 'source/_posts', user_state_handler.get_user_post() + '.md')
         with open(post_path, 'w') as f:
             f.write('---\n')
             f.write(f'title: {user_state_handler.get_user_post()}\n')
+            f.write(f'date: {datetime.now().strftime("%Y-%m-%d %H:%M:%S")}\n')
             f.write('---\n\n')
             f.write(new_content)
         update.message.reply_text(f'Content updated for: {user_state_handler.get_user_post()}.md')

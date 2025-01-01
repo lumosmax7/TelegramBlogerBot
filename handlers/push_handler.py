@@ -3,13 +3,12 @@ import subprocess
 
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import CallbackContext
-from config import BLOG_PATH
 
 
 def push(update: Update, context: CallbackContext) -> None:
-    drafts_path = os.path.join(BLOG_PATH, 'source/_drafts')
+    drafts_path = os.path.join("/app/bloger", 'source/_drafts')
     drafts = os.listdir(drafts_path)
-    posts_path = os.path.join(BLOG_PATH, 'source/_posts')
+    posts_path = os.path.join("/app/bloger", 'source/_posts')
     posts = os.listdir(posts_path)
     drafts_all = ''
     posts_all = ''
@@ -34,7 +33,7 @@ def push(update: Update, context: CallbackContext) -> None:
 
 def handle_push_choice(update: Update,
                        context: CallbackContext) -> None:
-    os.chdir(BLOG_PATH)
+    os.chdir("/app/bloger")
     for file_name in os.listdir('source/_drafts'):
         if file_name.endswith('.md'):
             subprocess.run(['mv', 'source/_drafts/' + file_name, 'source/_posts/'])

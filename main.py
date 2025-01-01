@@ -1,6 +1,8 @@
 import logging
+import os
 from telegram.ext import Updater, CommandHandler, CallbackQueryHandler, MessageHandler, Filters
-from config import TOKEN
+import sys
+import config
 from handlers import new_handler, edit_handler, delete_handler, page_delete_handler, push_handler, check_handler, button_handler, message_handler
 
 logging.basicConfig(
@@ -8,9 +10,9 @@ logging.basicConfig(
     level=logging.INFO
 )
 
-def main():
-    updater = Updater(TOKEN)
+def main(args):
 
+    updater = Updater(config.TOKEN)
     dispatcher = updater.dispatcher
 
     dispatcher.add_handler(CommandHandler("start", new_handler.start))
@@ -28,4 +30,18 @@ def main():
     updater.idle()
 
 if __name__ == '__main__':
-    main()
+
+    print(os.getenv('TOKEN'))
+    print(os.getenv('GP_URL'))
+
+    with open('config.py', 'w') as config_file:
+        config_file.write(f"TOKEN = '{os.getenv('TOKEN')}'\n")
+        config_file.write(f"GP_URL = '{os.getenv('GP_URL')}'\n")
+        # config_file.write(f"TOKEN = '7418461124:AAEIQvLm5WCgddRYQwt521RjcJaZUh_sP0c'\n")
+        # config_file.write(f"GP_URL = 'lumosmax7.github.io'\n")
+
+
+    if((config.GP_URL !=None ) & (config.TOKEN!=None)):
+        main(sys.argv)
+    else:
+        sys.exit(0)
