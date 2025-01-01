@@ -37,8 +37,6 @@ if __name__ == '__main__':
     with open('config.py', 'w') as config_file:
         config_file.write(f"TOKEN = '{os.getenv('TOKEN')}'\n")
         config_file.write(f"GP_URL = '{os.getenv('GP_URL')}'\n")
-        # config_file.write(f"TOKEN = '7418461124:AAEIQvLm5WCgddRYQwt521RjcJaZUh_sP0c'\n")
-        # config_file.write(f"GP_URL = 'lumosmax7.github.io'\n")
 
 
     if((config.GP_URL !=None ) & (config.TOKEN!=None)):
