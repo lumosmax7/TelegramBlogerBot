@@ -1,8 +1,9 @@
 # Auto Github Page generator by tg-bot
 ## Usage
 1. Clone this project into your hexo blog file and assure your blog can be correctly deployed on GitHub.
-2. Run `bash init.bash` to init the bot service.
-3. Enjoy your tg-bot with command `/start`
+2. Fill two environment variables in the config.py file: `TOKEN` and `GP_URL`. `TOKEN` is your tg-bot token, `GP_URL` is the url of your github page.
+3. Run `docker-compose up --build`
+4. Enjoy your tg-bot with command `/start` 
 
 
 ## Requirement
