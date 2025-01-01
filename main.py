@@ -11,20 +11,6 @@ logging.basicConfig(
 )
 
 def main(args):
-    if len(args) < 3:
-        print('Usage: python main.py <TOKEN> <BLOG_PATH> <GP_URL>')
-        sys.exit(1)
-
-
-
-    with open('config.py', 'w') as config_file:
-        config_file.write(f"TOKEN = '{str(args[1])}'\n")
-        config_file.write(f"GP_URL = '{str(args[2])}'\n")
-        config_file.write(f"BLOG_PATH = '/bloger'\n")
-
-
-    if not os.path.exists(os.path.join(config.BLOG_PATH, 'source/_drafts')):
-            os.makedirs(os.path.join(config.BLOG_PATH, 'source/_drafts'))
 
     updater = Updater(config.TOKEN)
     dispatcher = updater.dispatcher
@@ -44,4 +30,18 @@ def main(args):
     updater.idle()
 
 if __name__ == '__main__':
-    main(sys.argv)
+
+    print(os.getenv('TOKEN'))
+    print(os.getenv('GP_URL'))
+
+    with open('config.py', 'w') as config_file:
+        config_file.write(f"TOKEN = '{os.getenv('TOKEN')}'\n")
+        config_file.write(f"GP_URL = '{os.getenv('GP_URL')}'\n")
+        # config_file.write(f"TOKEN = '7418461124:AAEIQvLm5WCgddRYQwt521RjcJaZUh_sP0c'\n")
+        # config_file.write(f"GP_URL = 'lumosmax7.github.io'\n")
+
+
+    if((config.GP_URL !=None ) & (config.TOKEN!=None)):
+        main(sys.argv)
+    else:
+        sys.exit(0)

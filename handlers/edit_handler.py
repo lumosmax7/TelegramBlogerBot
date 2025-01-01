@@ -1,10 +1,9 @@
 import os
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import CallbackContext
-from config import BLOG_PATH
 
 def edit(update: Update, context: CallbackContext) -> None:
-    drafts_path = os.path.join(BLOG_PATH, 'source/_drafts')
+    drafts_path = os.path.join("/app/bloger", 'source/_drafts')
     drafts = [file for file in os.listdir(drafts_path) if file.endswith('.md')]
     if(not drafts):
         update.message.reply_text('No drafts available.')
@@ -15,7 +14,7 @@ def edit(update: Update, context: CallbackContext) -> None:
 
 
 def post_edit(update: Update, context: CallbackContext) -> None:
-    drafts_path = os.path.join(BLOG_PATH, 'source/_posts')
+    drafts_path = os.path.join("/app/bloger", 'source/_posts')
     drafts = [file for file in os.listdir(drafts_path) if file.endswith('.md')]
     keyboard = [[InlineKeyboardButton(draft, callback_data=f'post_edit_{draft}')] for draft in drafts]
     reply_markup = InlineKeyboardMarkup(keyboard)

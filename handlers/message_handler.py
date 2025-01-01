@@ -4,7 +4,6 @@ from telegram import Update
 from telegram.ext import CallbackContext
 from handlers import user_state_handler
 import os
-from config import BLOG_PATH
 import re
 def remove_backslashes_in_code_blocks(text):
     # 匹配所有以 ```cpp 并以 ```的代码块
@@ -25,8 +24,8 @@ def remove_backslashes_before_backticks(text):
 def handle_edit_message(update: Update, context: CallbackContext) -> None:
     if user_state_handler.get_user_state() == 'edit_title':
         new_title = update.message.text
-        old_path = os.path.join(BLOG_PATH, 'source/_drafts', user_state_handler.get_user_draft() + '.md')
-        new_path = os.path.join(BLOG_PATH, 'source/_drafts', f'{new_title}.md')
+        old_path = os.path.join("/app/bloger", 'source/_drafts', user_state_handler.get_user_draft() + '.md')
+        new_path = os.path.join("/app/bloger", 'source/_drafts', f'{new_title}.md')
         os.rename(old_path, new_path)
         with open(new_path, 'r+') as f:
             content = f.readlines()
@@ -44,7 +43,7 @@ def handle_edit_message(update: Update, context: CallbackContext) -> None:
             new_content = remove_backslashes_before_backticks(update.message.text_markdown)
         else:
             new_content = update.message.text_markdown
-        draft_path = os.path.join(BLOG_PATH, 'source/_drafts', user_state_handler.get_user_draft() + '.md')
+        draft_path = os.path.join("/app/bloger", 'source/_drafts', user_state_handler.get_user_draft() + '.md')
         with open(draft_path, 'w') as f:
             f.write('---\n')
             f.write(f'title: {user_state_handler.get_user_draft()}\n')
@@ -66,7 +65,7 @@ def handle_new_message(update: Update, context: CallbackContext) -> None:
             new_content = remove_backslashes_before_backticks(update.message.text_markdown)
         else:
             new_content = update.message.text_markdown
-        draft_path = os.path.join(BLOG_PATH, 'source/_drafts', f'{user_state_handler.get_user_draft()}.md')
+        draft_path = os.path.join("/app/bloger", 'source/_drafts', f'{user_state_handler.get_user_draft()}.md')
         with open(draft_path, 'w') as f:
             f.write('---\n')
             f.write(f'title: {user_state_handler.get_user_draft()}\n')
@@ -80,8 +79,8 @@ def handle_new_message(update: Update, context: CallbackContext) -> None:
 def handle_post_edit_message(update: Update, context: CallbackContext) -> None:
     if user_state_handler.get_user_state() == 'post_edit_title':
         new_title = update.message.text
-        old_path = os.path.join(BLOG_PATH, 'source/_posts', user_state_handler.get_user_post() + '.md')
-        new_path = os.path.join(BLOG_PATH, 'source/_posts', f'{new_title}.md')
+        old_path = os.path.join("/app/bloger", 'source/_posts', user_state_handler.get_user_post() + '.md')
+        new_path = os.path.join("/app/bloger", 'source/_posts', f'{new_title}.md')
         os.rename(old_path, new_path)
         with open(new_path, 'r+') as f:
             content = f.readlines()
@@ -99,7 +98,7 @@ def handle_post_edit_message(update: Update, context: CallbackContext) -> None:
             new_content = remove_backslashes_before_backticks(update.message.text_markdown)
         else:
             new_content = update.message.text_markdown
-        post_path = os.path.join(BLOG_PATH, 'source/_posts', user_state_handler.get_user_post() + '.md')
+        post_path = os.path.join("/app/bloger", 'source/_posts', user_state_handler.get_user_post() + '.md')
         with open(post_path, 'w') as f:
             f.write('---\n')
             f.write(f'title: {user_state_handler.get_user_post()}\n')
