@@ -15,6 +15,3 @@ RUN /usr/bin/pip3 install -r requirement.txt
 
 RUN git config --global user.email "tg@blogerbot.com"
 RUN git config --global user.name "tgblogerbot"
-
-#CMD ["bash"]
-CMD ["python3", "main.py"]

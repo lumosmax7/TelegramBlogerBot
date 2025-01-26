@@ -5,6 +5,7 @@ from telegram.ext import CallbackContext
 from handlers import user_state_handler
 import os
 import re
+
 def remove_backslashes_in_code_blocks(text):
     # 匹配所有以 ```cpp 并以 ```的代码块
     code_blocks = re.findall(r'(```cpp.*?```)', text, re.DOTALL)
@@ -15,7 +16,6 @@ def remove_backslashes_in_code_blocks(text):
     re.sub(r'\\(?=[.,/*%])', '', text)
     return text
 
-
 def remove_backslashes_before_backticks(text):
     # 匹配并去除出现在 ` 前的反斜杠
     text =re.sub(r'\\`', '`', text)
@@ -24,18 +24,17 @@ def remove_backslashes_before_backticks(text):
 def handle_edit_message(update: Update, context: CallbackContext) -> None:
     if user_state_handler.get_user_state() == 'edit_title':
         new_title = update.message.text
-        old_path = os.path.join("/app/bloger", 'source/_drafts', user_state_handler.get_user_draft() + '.md')
-        new_path = os.path.join("/app/bloger", 'source/_drafts', f'{new_title}.md')
-        os.rename(old_path, new_path)
-        with open(new_path, 'r+') as f:
+        path = os.path.join("/app/bloger", 'source/_drafts', user_state_handler.get_user_file_name() + '.md')
+        with open(path, 'r+') as f:
             content = f.readlines()
             content[1] = f'title: {new_title}\n'
             f.seek(0)
             f.writelines(content)
             f.truncate()
-        update.message.reply_text(f'Title updated to: {new_title}.md')
+        update.message.reply_text(f'File name is {user_state_handler.get_user_file_name()}.md\nTitle updated to: {new_title}')
         user_state_handler.set_user_state(None)
         user_state_handler.set_user_draft(None)
+        user_state_handler.set_user_file_name(None)
     elif user_state_handler.get_user_state() == 'edit_content':
         if(re.search(r'```.*?```', update.message.text_markdown, re.DOTALL)):
             new_content= remove_backslashes_in_code_blocks(update.message.text_markdown)
@@ -43,19 +42,25 @@ def handle_edit_message(update: Update, context: CallbackContext) -> None:
             new_content = remove_backslashes_before_backticks(update.message.text_markdown)
         else:
             new_content = update.message.text_markdown
-        draft_path = os.path.join("/app/bloger", 'source/_drafts', user_state_handler.get_user_draft() + '.md')
+        draft_path = os.path.join("/app/bloger", 'source/_drafts', user_state_handler.get_user_file_name() + '.md')
         with open(draft_path, 'w') as f:
             f.write('---\n')
             f.write(f'title: {user_state_handler.get_user_draft()}\n')
             f.write(f'date: {datetime.now().strftime("%Y-%m-%d %H:%M:%S")}\n')
             f.write('---\n\n')
             f.write(new_content)
-        update.message.reply_text(f'Content updated for: {user_state_handler.get_user_draft()}.md')
+        update.message.reply_text(f'Content updated for: {user_state_handler.get_user_file_name()}.md')
         user_state_handler.set_user_state(None)
         user_state_handler.set_user_draft(None)
+        user_state_handler.set_user_file_name(None)
+
 def handle_new_message(update: Update, context: CallbackContext) -> None:
     if user_state_handler.get_user_state() == 'new_title':
         user_state_handler.set_user_draft(update.message.text)
+        # 获取当前时间作为文件名
+        current_time = datetime.now()
+        time_string = current_time.strftime("%Y-%m-%d-%H-%M-%S")
+        user_state_handler.set_user_file_name(time_string)
         update.message.reply_text(f'Title received: {user_state_handler.get_user_draft()}\nNow please enter the content of the draft:')
         user_state_handler.set_user_state('new_content')
     elif user_state_handler.get_user_state() == 'new_content':
@@ -65,16 +70,17 @@ def handle_new_message(update: Update, context: CallbackContext) -> None:
             new_content = remove_backslashes_before_backticks(update.message.text_markdown)
         else:
             new_content = update.message.text_markdown
-        draft_path = os.path.join("/app/bloger", 'source/_drafts', f'{user_state_handler.get_user_draft()}.md')
+        draft_path = os.path.join("/app/bloger", 'source/_drafts', f'{user_state_handler.get_user_file_name()}.md')
         with open(draft_path, 'w') as f:
             f.write('---\n')
             f.write(f'title: {user_state_handler.get_user_draft()}\n')
             f.write(f'date: {datetime.now().strftime("%Y-%m-%d %H:%M:%S")}\n')
             f.write('---\n\n')
             f.write(f'{new_content}')
-        update.message.reply_text(f'New draft created: {user_state_handler.get_user_draft()}')
+        update.message.reply_text(f'New draft created: {user_state_handler.get_user_file_name()}.md\nTitle is {user_state_handler.get_user_draft()}.')
         user_state_handler.set_user_state(None)
         user_state_handler.set_user_draft(None)
+        user_state_handler.set_user_file_name(None)
 
 def handle_post_edit_message(update: Update, context: CallbackContext) -> None:
     if user_state_handler.get_user_state() == 'post_edit_title':

@@ -5,6 +5,14 @@ services:
     build: .  # 使用当前目录下的 Dockerfile 构建镜像
     container_name: tgbot # 容器名称
     volumes:  # 挂载外部目录到容器内部
-      - /Users/leo/OneDrive/bloger_test:/app/bloger        # 挂载本地 data 目录到容器 /app/data
+      - /Users/leo/OneDrive/bloger:/app/bloger        # 挂载本地 data 目录到容器 /app/data
     env_file:  # 引入 .env 文件中的环境变量
       - .env
+    ports: # 映射端口
+      - "4000:4000"
+    networks:  # 指定服务使用的网络
+      - host_network
+
+networks:  # 定义网络
+  host_network:
+    driver: bridge
